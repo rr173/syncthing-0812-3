@@ -554,7 +554,10 @@ func replaceRawPath(u *url.URL, rp string) {
 			q = fs[1]
 		}
 
-		if p[0] == '/' {
+		if p == "" {
+			// The control URL contains only query parameters and no path.
+			// Keep the existing path and just apply the query parameters.
+		} else if p[0] == '/' {
 			u.Path = p
 		} else {
 			u.Path += p

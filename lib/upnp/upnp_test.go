@@ -78,4 +78,27 @@ func TestControlURLParsing(t *testing.T) {
 	if u.String() != expected {
 		t.Error("URL normalization of", subject, "failed; expected", expected, "got", u.String())
 	}
+
+	// A control URL that contains only query parameters and no path must not
+	// crash. The original path of the root URL is preserved and the query is
+	// applied.
+	u, _ = url.Parse(rootURL)
+	subject = "?control=WANCommonIFC1"
+	expected = "http://192.168.243.1:80/igd.xml?control=WANCommonIFC1"
+	replaceRawPath(u, subject)
+
+	if u.String() != expected {
+		t.Error("URL normalization of", subject, "failed; expected", expected, "got", u.String())
+	}
+
+	// A relative control URL without a path but with a query keeps the root
+	// URL's path as well.
+	u, _ = url.Parse(rootURL)
+	subject = "?control=WANCommonIFC1&foo=bar"
+	expected = "http://192.168.243.1:80/igd.xml?control=WANCommonIFC1&foo=bar"
+	replaceRawPath(u, subject)
+
+	if u.String() != expected {
+		t.Error("URL normalization of", subject, "failed; expected", expected, "got", u.String())
+	}
 }
